@@ -6,7 +6,7 @@ See [Advent of Code 2025](https://adventofcode.com/2025)
 dotnet new nunit
 
 ## Add Fluent Assertions
-dotnet add package fluentassertions
+dotnet add package fluentassertions@7
 
 ## Run tests
 dotnet test
