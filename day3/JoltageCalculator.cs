@@ -2,6 +2,38 @@ namespace day3;
 
 public class JoltageCalculator
 {
+    public static string CalculateMaxJoltage2(string bank, int numberOfBatteriesToActivate)
+    {
+        var bankAsInts = bank.Select(c => int.Parse(c.ToString())).ToList();
+
+        List<int> activatedBatteryIndexes = [];
+        List<int> bankAsIntsCopy = bankAsInts[..];
+        int searchStartIndex = 0;
+        for(int activeBatteryCount = 0; activeBatteryCount < numberOfBatteriesToActivate; activeBatteryCount++)
+        {
+            // only look _after_ the highest digit for more max digits
+            var sliceToSearch = bankAsIntsCopy[searchStartIndex..];
+            var highestBattery = sliceToSearch.Max();
+            var highestBatteryIndex = sliceToSearch.FindIndex(c => c == highestBattery) + searchStartIndex;
+            activatedBatteryIndexes.Add(highestBatteryIndex);
+            // ignore already found activated indexes
+            bankAsIntsCopy[highestBatteryIndex] = 0;
+            // reset search start when we have no > 0 values in the coming slice
+            if (highestBatteryIndex + 1 == bankAsIntsCopy.Count ||
+                bankAsIntsCopy[(highestBatteryIndex + 1)..].Max() == 0)
+            {
+                searchStartIndex = 0;
+            }
+            else
+            {
+                searchStartIndex = highestBatteryIndex + 1;
+            }
+        }
+
+        activatedBatteryIndexes.Sort();
+        return string.Join("", activatedBatteryIndexes.Select(index => bankAsInts[index]));
+    }
+
     public static string CalculateMaxJoltage(string bank)
     {
         var bankAsInts = bank.Select(c => int.Parse(c.ToString())).ToList();
