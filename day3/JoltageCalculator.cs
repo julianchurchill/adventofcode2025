@@ -20,7 +20,7 @@ public class JoltageCalculator
             bankAsIntsCopy[highestBatteryIndex] = 0;
             // reset search start when we have no > 0 values in the coming slice
             if (highestBatteryIndex + 1 == bankAsIntsCopy.Count ||
-                bankAsIntsCopy[(highestBatteryIndex + 1)..].Max() == 0)
+                bankAsIntsCopy[(highestBatteryIndex + 1)..].All(b => b == 0))
             {
                 searchStartIndex = 0;
             }
