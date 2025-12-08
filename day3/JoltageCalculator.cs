@@ -6,32 +6,21 @@ public class JoltageCalculator
     {
         var bankAsInts = bank.Select(c => int.Parse(c.ToString())).ToList();
 
-        List<int> activatedBatteryIndexes = [];
-        List<int> bankAsIntsCopy = bankAsInts[..];
+        List<int> activatedBatteries = [];
         int searchStartIndex = 0;
         for(int activeBatteryCount = 0; activeBatteryCount < numberOfBatteriesToActivate; activeBatteryCount++)
         {
-            // only look _after_ the highest digit for more max digits
-            var sliceToSearch = bankAsIntsCopy[searchStartIndex..];
+            // only look _after_ the highest digit for more max digits, slice end +1 to make it inclusive
+            var searchEndIndex = bankAsInts.Count - numberOfBatteriesToActivate + activeBatteryCount + 1;
+            var sliceToSearch = bankAsInts[searchStartIndex..searchEndIndex];
             var highestBattery = sliceToSearch.Max();
             var highestBatteryIndex = sliceToSearch.FindIndex(c => c == highestBattery) + searchStartIndex;
-            activatedBatteryIndexes.Add(highestBatteryIndex);
-            // ignore already found activated indexes
-            bankAsIntsCopy[highestBatteryIndex] = 0;
-            // reset search start when we have no > 0 values in the coming slice
-            if (highestBatteryIndex + 1 == bankAsIntsCopy.Count ||
-                bankAsIntsCopy[(highestBatteryIndex + 1)..].All(b => b == 0))
-            {
-                searchStartIndex = 0;
-            }
-            else
-            {
-                searchStartIndex = highestBatteryIndex + 1;
-            }
+            activatedBatteries.Add(highestBattery);
+            // set search start to after last highest battery
+            searchStartIndex = highestBatteryIndex + 1;
         }
 
-        activatedBatteryIndexes.Sort();
-        return string.Join("", activatedBatteryIndexes.Select(index => bankAsInts[index]));
+        return string.Join("", activatedBatteries);
     }
 
     public static string CalculateMaxJoltage(string bank)
